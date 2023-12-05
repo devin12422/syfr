@@ -25,7 +25,7 @@ fn player_movement(
     mut motion_evr: EventReader<MouseMotion>,
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
-    mut player_q: Query<(&Transform, &mut KinematicCharacterController), With<PlayerMarker>>,
+    mut player_q: Query<(&mut Transform, &mut KinematicCharacterController), With<PlayerMarker>>,
 ) {
     for mut player_transform in player_q.iter_mut() {
         for ev in motion_evr.read() {
@@ -33,6 +33,7 @@ fn player_movement(
             // player_transform.rotate_local_axis(, );
             // It may actually be faster to use two rotate functions
             // The gain in using only one functon invocation relies on reduction in sinusoidal function calls
+            player_transform.0.rotate_local_y(45.0_f32.to_radians());
         }
         let mut direction: Vec3 = Vec3::ZERO;
         if keys.pressed(KeyCode::W) {
@@ -58,28 +59,32 @@ fn spawn_player(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let player = commands
-        .spawn(LivingBundle {
-            pbr: PbrBundle {
-                mesh: meshes.add(Mesh::from(shape::Cube::new(1.0))),
-                material: materials.add(Color::BLUE.into()),
-                transform: Transform::from_xyz(0.0, 0.5, 0.0),
-                ..Default::default()
+        .spawn((
+            LivingBundle {
+                pbr: PbrBundle {
+                    mesh: meshes.add(Mesh::from(shape::Cube::new(1.0))),
+                    material: materials.add(Color::BLUE.into()),
+                    transform: Transform::from_xyz(0.0, 0.5, 0.0),
+                    ..Default::default()
+                },
+                // camera:,
+                kinematic_controller: KinematicCharacterController::default(),
+                collider: Collider::ball(0.5),
+                rigidbody: RigidBody::KinematicPositionBased,
             },
-            // camera: Camera3dBundle {
-            //     transform: Transform::from_xyz(-5.0, 1.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
-            //     ..Default::default()
-            // },
-            kinematic_controller: KinematicCharacterController::default(),
-            collider: Collider::ball(0.5),
-            rigidbody: RigidBody::KinematicPositionBased,
-            marker: PlayerMarker,
-        })
+            PlayerMarker,
+        ))
         .id();
     // commands
     //     .spawn(RigidBody::Dynamic)
     //     .insert(Collider::ball(0.5))
     //     .insert(Restitution::coefficient(0.7))
     //     .insert(TransformBundle::from(Transform::from_xyz(0.0, 4.0, 0.0)));
-    // let camera = commands.spawn((PlayerCameraMarker,)).id();
-    // commands.entity(player).add_child(camera);
+    let camera = commands
+        .spawn(Camera3dBundle {
+            transform: Transform::from_xyz(0.0, 1.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+            ..Default::default()
+        })
+        .id();
+    commands.entity(player).add_child(camera);
 }

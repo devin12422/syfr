@@ -23,11 +23,11 @@ fn spawn_floor(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    // commands
-    //     .spawn(Collider::cuboid(100.0, 0.1, 100.0))
-    //     .insert(TransformBundle::from(Transform::from_xyz(0.0, -2.0, 0.0)));
+    commands
+        .spawn(Collider::cuboid(100.0, 0.1, 100.0))
+        .insert(TransformBundle::from(Transform::from_xyz(0.0, -2.0, 0.0)));
     let floor = PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Plane::from_size(15.0))),
+        mesh: meshes.add(Mesh::from(shape::Plane::from_size(100.0))),
         material: materials.add(Color::DARK_GREEN.into()),
         ..default()
     };
