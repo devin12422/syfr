@@ -1,9 +1,11 @@
 // use crate::camera::*;
-use crate::window::*;
+use crate::camera::*;
+use crate::prelude::*;
+
 use bevy::input::mouse::MouseMotion;
-use bevy::prelude::*;
 use bevy_rapier3d::control::KinematicCharacterController;
 use bevy_rapier3d::prelude::*;
+// use bevy_rapier3d::rapier::crossbeam::epoch::Pointable;
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
@@ -13,8 +15,6 @@ impl Plugin for PlayerPlugin {
 }
 #[derive(Component)]
 struct PlayerMarker;
-#[derive(Component)]
-struct PlayerCameraMarker;
 #[derive(Bundle)]
 struct LivingBundle {
     pbr: PbrBundle,
@@ -25,6 +25,7 @@ struct LivingBundle {
 }
 
 fn player_movement(
+    mut commands: Commands,
     mut motion_evr: EventReader<MouseMotion>,
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
@@ -79,12 +80,13 @@ fn spawn_player(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    camera_q: Query<Entity, With<PlayerCameraMarker>>,
 ) {
     let player = commands
         .spawn((
             LivingBundle {
                 pbr: PbrBundle {
-                    mesh: meshes.add(Mesh::from(shape::Cube::new(1.0))),
+                    mesh: meshes.add(Mesh::from(shape::Capsule::default())),
                     material: materials.add(Color::BLUE.into()),
                     transform: Transform::from_xyz(0.0, 0.5, 0.0),
                     ..Default::default()
@@ -105,14 +107,5 @@ fn spawn_player(
     //     .insert(Collider::ball(0.5))
     //     .insert(Restitution::coefficient(0.7))
     //     .insert(TransformBundle::from(Transform::from_xyz(0.0, 4.0, 0.0)));
-    let camera = commands
-        .spawn((
-            Camera3dBundle {
-                transform: Transform::from_xyz(0.0, 1.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
-                ..Default::default()
-            },
-            PlayerCameraMarker,
-        ))
-        .id();
-    commands.entity(player).add_child(camera);
+    commands.entity(player).add_child(camera_q.single());
 }

@@ -4,7 +4,7 @@ pub struct WindowPlugin;
 impl Plugin for WindowPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PostStartup, initialize_resources)
-            .add_systems(Update, (on_window_resize, handle_cursor));
+            .add_systems(Update, (handle_cursor));
     }
 }
 #[derive(Resource)]
@@ -14,8 +14,9 @@ pub struct WindowInfoResource {
 
 fn initialize_resources(
     mut commands: Commands,
-    window_q: Query<&Window, (With<Window>, With<PrimaryWindow>)>,
+    mut window_q: Query<&mut Window, (With<Window>, With<PrimaryWindow>)>,
 ) {
+    window_q.single_mut().cursor.grab_mode = CursorGrabMode::Confined;
     commands.insert_resource(WindowInfoResource {
         resolution: Vec2 {
             x: window_q.single().resolution.physical_width() as f32,
@@ -23,15 +24,15 @@ fn initialize_resources(
         },
     });
 }
-fn on_window_resize(
-    mut ev_resize: EventReader<WindowResized>,
-    mut window_info: ResMut<WindowInfoResource>,
-) {
-    for ev in ev_resize.read() {
-        window_info.resolution.x = ev.width;
-        window_info.resolution.y = ev.height;
-    }
-}
+// fn on_window_resize(
+//     mut ev_resize: EventReader<WindowResized>,
+//     mut window_info: ResMut<WindowInfoResource>,
+// ) {
+//     for ev in ev_resize.read() {
+//         window_info.resolution.x = ev.width;
+//         window_info.resolution.y = ev.height;
+//     }
+// }
 fn handle_cursor(
     keys: Res<Input<KeyCode>>,
     mut ev_focus: EventReader<WindowFocused>,
