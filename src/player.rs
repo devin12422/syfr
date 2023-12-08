@@ -1,7 +1,7 @@
 // use crate::camera::*;
 use crate::camera::*;
 use crate::prelude::*;
-
+use crate::AppState;
 use bevy::input::mouse::MouseMotion;
 use bevy_rapier3d::control::KinematicCharacterController;
 use bevy_rapier3d::prelude::*;
@@ -9,8 +9,8 @@ use bevy_rapier3d::prelude::*;
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_player)
-            .add_systems(Update, player_movement);
+        app.add_systems(OnEnter(AppState::InGame), spawn_player)
+            .add_systems(Update, player_movement.run_if(in_state(AppState::InGame)));
     }
 }
 #[derive(Component)]

@@ -1,10 +1,13 @@
-use bevy::prelude::*;
+use crate::player::*;
+use crate::prelude::*;
+use crate::AppState;
 use bevy_rapier3d::prelude::*;
 
 pub struct WorldPlugin;
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, (spawn_light, spawn_floor));
+        app.add_systems(OnEnter(AppState::InGame), (spawn_light, spawn_floor))
+            .add_plugins(PlayerPlugin);
     }
 }
 fn spawn_light(mut commands: Commands) {

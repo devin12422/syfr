@@ -3,35 +3,35 @@ pub mod prelude {
     pub use bevy_lunex::prelude::*;
 }
 use crate::camera::*;
-use crate::gui::prelude::*;
 use crate::prelude::*;
 use crate::utilities::constants::*;
+use crate::window::gui::prelude::*;
 use bevy::window::PrimaryWindow;
 // pub mod components;
 
 pub struct GUIPlugin;
 impl Plugin for GUIPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(LunexUiPlugin2D::<MyData>::new())
-            .add_systems(PreStartup, presetup)
-            .add_systems(Startup, setup);
+        // app.add_plugins(LunexUiPlugin2D::<MyData>::new())
+        //     .add_systems(PreStartup, presetup)
+        //     .add_systems(Startup, setup);
         // .add_systems(PostStartup, initialize_resources);
         // .add_systems(Update, (handle_cursor));
     }
 }
-#[derive(Resource)]
-pub struct MenuAssetCache {
-    pub font: Handle<Font>,
-}
-#[derive(Debug, Clone, Component, Default)]
-pub struct MyData {
-    pub animate_trigger: bool,
-    pub animate_slider: f32,
-}
+// #[derive(Resource)]
+// pub struct MenuAssetCache {
+//     pub font: Handle<Font>,
+// }
+// #[derive(Debug, Clone, Component, Default)]
+// pub struct MyData {
+//     pub animate_trigger: bool,
+//     pub animate_slider: f32,
+// }
 fn presetup(mut commands: Commands, asset_server: Res<AssetServer>) {}
 fn setup(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    // asset_server: Res<AssetServer>,
     // assets: Res<MenuAssetCache>,
     // mut textures: ResMut<Assets<TextureAtlas>>,
     window: Query<Entity, (With<Window>, With<PrimaryWindow>)>,

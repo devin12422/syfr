@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 use bevy::window::*;
+pub mod gui;
 pub struct WindowPlugin;
 impl Plugin for WindowPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PostStartup, initialize_resources)
-            .add_systems(Update, (handle_cursor));
+            .add_systems(Update, handle_cursor);
     }
 }
 #[derive(Resource)]

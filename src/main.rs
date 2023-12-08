@@ -17,29 +17,34 @@ use bevy_rapier3d::prelude::*;
 use camera::PlayerCameraPlugin;
 use prelude::*;
 
-mod app;
+mod backend;
 mod camera;
-mod gui;
+mod input;
 mod player;
 mod utilities;
 mod window;
 mod world;
-
-use app::*;
-use gui::GUIPlugin;
+use backend::*;
+// use gui::GUIPlugin;
 use player::PlayerPlugin;
-use window::WindowPlugin;
 use world::WorldPlugin;
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+enum AppState {
+    #[default]
+    MainMenu,
+    InGame,
+    Pause,
+}
 fn main() {
     App::new()
+        .add_state::<AppState>()
         .add_plugins((
             DefaultPlugins,
-            AppStatePlugin,
             PlayerCameraPlugin,
-            GUIPlugin,
-            PlayerPlugin,
+            // GUIPlugin,
+            // PlayerPlugin,
             WorldPlugin,
-            WindowPlugin,
+            BackendPlugin,
         ))
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .run();
